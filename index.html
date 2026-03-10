@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Care Coreano | Prodotti Coreani | ᗰIᑕKY ᔕTOᖇE</title>
+    <meta name="description"
+        content="Scopri i migliori prodotti di skin care coreano su ᗰIᑕKY ᔕTOᖇE. Cosmetici coreani, K-beauty, prodotti skincare originali dalla Corea. Spedizione in Italia.">
+    <meta name="keywords"
+        content="skin care coreano, prodotti coreani, k-beauty, cosmetici coreani, skincare coreano, prodotti skincare, beauty coreano, cosmesi coreana, prodotti bellezza coreani">
+    <meta name="author" content="ᗰIᑕKY ᔕTOᖇE">
+    <meta property="og:title" content="Skin Care Coreano | Prodotti Coreani | ᗰIᑕKY ᔕTOᖇE">
+    <meta property="og:description"
+        content="I migliori prodotti di skin care coreano e K-beauty. Cosmetici originali dalla Corea.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://spiffy-biscotti-c4f42a.netlify.app/">
+    <link rel="stylesheet" href="styles.css?v=22">
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" id="close-login-modal">&times;</span>
+            <h2>Accedi</h2>
+            <form id="login-form">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" name="username" required autocomplete="username">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" required autocomplete="current-password">
+                <div class="remember-row">
+                    <input type="checkbox" id="remember-me" name="remember">
+                    <label for="remember-me">Ricordami</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Accedi</button>
+            </form>
+            <div class="create-account-row">
+                <span>Non hai un account?</span>
+                <a href="#" id="create-account-link">Crea account</a>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Crea Account -->
+    <div id="register-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" id="close-register-modal">&times;</span>
+            <h2>Crea Account</h2>
+            <form id="register-form">
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" name="username" required autocomplete="username">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" name="email" required autocomplete="email">
+                <label for="register-phone">Numero di telefono</label>
+                <div class="phone-row">
+                    <select id="register-prefix" name="prefix" required style="width: 32%; min-width: 80px;">
+                        <option value="+39">🇮🇹 +39</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+33">🇫🇷 +33</option>
+                        <option value="+49">🇩🇪 +49</option>
+                        <option value="+34">🇪🇸 +34</option>
+                        <option value="+81">🇯🇵 +81</option>
+                        <option value="+82">🇰🇷 +82</option>
+                        <option value="+86">🇨🇳 +86</option>
+                        <option value="+7">🇷🇺 +7</option>
+                        <option value="+91">🇮🇳 +91</option>
+                        <option value="+55">🇧🇷 +55</option>
+                        <option value="+52">🇲🇽 +52</option>
+                        <option value="+61">🇦🇺 +61</option>
+                        <option value="+90">🇹🇷 +90</option>
+                        <option value="+20">🇪🇬 +20</option>
+                        <option value="+212">🇲🇦 +212</option>
+                        <option value="+234">🇳🇬 +234</option>
+                        <option value="+27">🇿🇦 +27</option>
+                        <option value="+62">🇮🇩 +62</option>
+                        <option value="+66">🇹🇭 +66</option>
+                        <option value="+63">🇵🇭 +63</option>
+                        <option value="+972">🇮🇱 +972</option>
+                        <option value="+7-7">🇰🇿 +7-7</option>
+                        <option value="+358">🇫🇮 +358</option>
+                        <option value="+46">🇸🇪 +46</option>
+                        <option value="+47">🇳🇴 +47</option>
+                        <option value="+48">🇵🇱 +48</option>
+                        <option value="+351">🇵🇹 +351</option>
+                        <option value="+420">🇨🇿 +420</option>
+                        <option value="+421">🇸🇰 +421</option>
+                        <option value="+386">🇸🇮 +386</option>
+                        <option value="+43">🇦🇹 +43</option>
+                        <option value="+31">🇳🇱 +31</option>
+                        <option value="+32">🇧🇪 +32</option>
+                        <option value="+36">🇭🇺 +36</option>
+                        <option value="+40">🇷🇴 +40</option>
+                        <option value="+30">🇬🇷 +30</option>
+                        <option value="+353">🇮🇪 +353</option>
+                        <option value="+380">🇺🇦 +380</option>
+                        <option value="+375">🇧🇾 +375</option>
+                        <option value="+994">🇦🇿 +994</option>
+                        <option value="+995">🇬🇪 +995</option>
+                        <option value="+998">🇺🇿 +998</option>
+                        <option value="+961">🇱🇧 +961</option>
+                        <option value="+962">🇯🇴 +962</option>
+                        <option value="+964">🇮🇶 +964</option>
+                        <option value="+965">🇰🇼 +965</option>
+                        <option value="+966">🇸🇦 +966</option>
+                        <option value="+971">🇦🇪 +971</option>
+                        <option value="+973">🇧🇭 +973</option>
+                        <option value="+974">🇶🇦 +974</option>
+                        <option value="+975">🇧🇹 +975</option>
+                        <option value="+976">🇲🇳 +976</option>
+                        <option value="+977">🇳🇵 +977</option>
+                        <option value="+880">🇧🇩 +880</option>
+                        <option value="+94">🇱🇰 +94</option>
+                        <option value="+95">🇲🇲 +95</option>
+                        <option value="+960">🇲🇻 +960</option>
+                        <option value="+961">🇱🇧 +961</option>
+                        <option value="+962">🇯🇴 +962</option>
+                        <option value="+963">🇸🇾 +963</option>
+                        <option value="+964">🇮🇶 +964</option>
+                        <option value="+965">🇰🇼 +965</option>
+                        <option value="+966">🇸🇦 +966</option>
+                        <option value="+967">🇾🇪 +967</option>
+                        <option value="+968">🇴🇲 +968</option>
+                        <option value="+970">🇵🇸 +970</option>
+                        <option value="+971">🇦🇪 +971</option>
+                        <option value="+972">🇮🇱 +972</option>
+                        <option value="+973">🇧🇭 +973</option>
+                        <option value="+974">🇶🇦 +974</option>
+                        <option value="+975">🇧🇹 +975</option>
+                        <option value="+976">🇲🇳 +976</option>
+                        <option value="+977">🇳🇵 +977</option>
+                        <!-- Altri prefissi possono essere aggiunti -->
+                    </select>
+                    <input type="tel" id="register-phone" name="phone" required pattern="[0-9]{5,15}" autocomplete="tel"
+                        placeholder="es. 3331234567" style="width: 66%; margin-left: 2%;">
+                </div>
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" name="password" required autocomplete="new-password">
+                <button type="submit" class="btn btn-primary">Registrati</button>
+            </form>
+        </div>
+    </div>
+    <!-- Header e Navigazione -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="1768777026909.jpg" alt="Skin Care Coreano - Prodotti Coreani K-Beauty" class="logo-img">
+                    <h1 class="store-name">ᗰIᑕKY ᔕTOᖇE</h1>
+                </div>
+                <div class="login-absolute">
+                    <a href="#" class="login-link" title="Accedi">
+                        <i class="fas fa-user"></i>
+                        <span class="login-text">Accedi</span>
+                    </a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="prodotti.html">Prodotti</a></li>
+                    <li><a href="ordini-admin.html"><i class="fas fa-box"></i> Ordini</a></li>
+                    <li><a href="#contatti">Contatti</a></li>
+                </ul>
+                <div class="cart-wishlist">
+                    <a href="carrello.html" class="cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </a>
+                    <a href="#" class="wishlist-link" onclick="showWishlistModal()" title="La mia lista desideri">
+                        <i class="fas fa-heart"></i>
+                        <span class="wishlist-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Skin Care Coreano | Prodotti K-Beauty Originali</h2>
+            <p>Scopri i migliori prodotti di cosmetica coreana per la tua pelle. Skin care coreano autentico,
+                direttamente dalla Corea</p>
+            <a href="prodotti.html" class="btn btn-primary">Scopri il Meglio della K-Beauty</a>
+        </div>
+    </section>
+
+    <!-- Prodotti in Evidenza -->
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">Prodotti Coreani in Evidenza - Skin Care K-Beauty</h2>
+            <div class="products-grid" id="featured-products">
+                <!-- I prodotti verranno caricati dinamicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Caratteristiche -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h3>Spedizione Veloce</h3>
+                    <p>Consegna in 24-48 ore</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-lock"></i>
+                    <h3>Pagamenti Sicuri</h3>
+                    <p>Transazioni protette al 100%</p>
+                    <div class="payment-logos">
+                        <img src="Visa_Brandmark_RGB_2021_PNG/Visa_Brandmark_Blue_RGB_2021.png" alt="Visa"
+                            class="payment-logo">
+                        <img src="Mastercard%20Symbol%20-%20PNG/Artwork/Mastercard%20Symbol%2045px%20PNG/ma_symbol_opt_45_1x.png"
+                            alt="Mastercard" class="payment-logo">
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-undo"></i>
+                    <h3>Reso Gratuito</h3>
+                    <p>Entro 30 giorni dall'acquisto</p>
+                </div>
+                <div class="feature-card" style="cursor: pointer;"
+                    onclick="window.location.href='mailto:mickystore26@gmail.com?subject=Richiesta Assistenza'">
+                    <i class="fas fa-headset"></i>
+                    <h3>Assistenza 24/7</h3>
+                    <p>Sempre disponibili per te</p>
+                    <small style="color: #3498db; margin-top: 10px; display: block;">Clicca per contattarci</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contatti -->
+    <section id="contatti" class="contact"
+        style="padding: 120px 0 100px 0; background: linear-gradient(180deg, #fdeaf2 80%, #f48fb1 100%); border-radius: 30px 30px 0 0; box-shadow: 0 8px 32px rgba(243, 207, 224, 0.18);">
+        <div class="container">
+            <h2 class="section-title" style="font-size: 2.8rem; margin-bottom: 2.5rem;">Contattaci</h2>
+            <div class="contact-content"
+                style="display: flex; flex-wrap: wrap; gap: 60px; justify-content: center; align-items: flex-start;">
+                <div class="contact-info" style="flex: 1 1 320px; max-width: 400px;">
+                    <div class="info-item" style="margin-bottom: 30px; font-size: 1.2rem;">
+                        <i class="fas fa-envelope"></i>
+                        <p style="margin-left: 12px;">mickystore26@gmail.com</p>
+                    </div>
+                    <div class="info-item" style="margin-bottom: 30px; font-size: 1.2rem;">
+                        <i class="fas fa-phone"></i>
+                        <p style="margin-left: 12px;">+393 298 982 043</p>
+                    </div>
+                    <div class="info-item" style="font-size: 1.2rem;">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p style="margin-left: 12px;">Milano, IT</p>
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form"
+                    style="flex: 1 1 320px; max-width: 420px; background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(225,0,123,0.08); padding: 36px 28px; display: flex; flex-direction: column; gap: 18px;">
+                    <input type="text" name="name" placeholder="Nome" required
+                        style="padding: 14px; border: 2px solid #f48fb1; border-radius: 6px; font-size: 1.1rem;">
+                    <input type="email" name="email" placeholder="Email" required
+                        style="padding: 14px; border: 2px solid #f48fb1; border-radius: 6px; font-size: 1.1rem;">
+                    <textarea name="message" placeholder="Messaggio" rows="5" required
+                        style="padding: 14px; border: 2px solid #f48fb1; border-radius: 6px; font-size: 1.1rem;"></textarea>
+                    <button type="submit" class="btn btn-primary" style="font-size: 1.1rem;">Invia Messaggio</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container" style="text-align: center; padding: 18px 0 8px 0;">
+            <p style="margin: 0 auto; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.5px; color: #111;">&copy;
+                2026 ᗰIᑕKY ᔕTOᖇE. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script>
+        // Configurazione Firebase reale
+        const firebaseConfig = {
+            apiKey: "AIzaSyBINdSuBqKjP8pW_wx_i6O15PCQSpduubs",
+            authDomain: "my-project-db329.firebaseapp.com",
+            databaseURL: "https://my-project-db329-default-rtdb.firebaseio.com",
+            projectId: "my-project-db329",
+            storageBucket: "my-project-db329.firebasestorage.app",
+            messagingSenderId: "898811994508",
+            appId: "1:898811994508:web:891289864eaf7f0e50b6a9",
+            measurementId: "G-3742HRSZ0L"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        // Autenticazione anonima
+        firebase.auth().signInAnonymously().catch((error) => {
+            console.error('Errore autenticazione Firebase:', error);
+        });
+    </script>
+    <script src="chat.js?v=3"></script>
+</body>
+
+</html>
+
+{
+"rules": {
+".read": true,
+".write": true
+}
+}

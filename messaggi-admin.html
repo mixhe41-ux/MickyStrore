@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Messaggi Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script>
+        // Configurazione Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBINdSuBqKjP8pW_wx_i6O15PCQSpduubs",
+            authDomain: "my-project-db329.firebaseapp.com",
+            databaseURL: "https://my-project-db329-default-rtdb.firebaseio.com",
+            projectId: "my-project-db329",
+            storageBucket: "my-project-db329.firebasestorage.app",
+            messagingSenderId: "898811994508",
+            appId: "1:898811994508:web:891289864eaf7f0e50b6a9",
+            measurementId: "G-3742HRSZ0L"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        firebase.auth().signInAnonymously().catch((error) => {
+            console.error('Errore autenticazione Firebase:', error);
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        .header h1 i {
+            color: #e91e63;
+            margin-right: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .messages-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-card {
+            background: #f8f9fa;
+            border-left: 4px solid #e91e63;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .message-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-card.unread {
+            background: #fff3f8;
+            border-left-color: #ff1744;
+        }
+
+        /* operator messages */
+        .message-card.operator {
+            background: #e3f2fd;
+            border-left-color: #2196f3;
+        }
+
+        .message-card.operator .message-header .message-date i {
+            color: #2196f3;
+        }
+
+        .message-card.operator .message-body {
+            color: #0d47a1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .message-date {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .message-date i {
+            margin-right: 5px;
+        }
+
+        .message-badge {
+            background: #ff1744;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .message-body {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.6;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #e91e63;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c2185b;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e91e63;
+            background: white;
+            color: #e91e63;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #e91e63;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: #e91e63;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-inbox"></i>Messaggi Chat</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="number" id="total-messages">0</div>
+                    <div class="label">Totali</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="unread-messages">0</div>
+                    <div class="label">Non Letti</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="messages-container">
+            <div class="actions-bar">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterMessages('all')">Tutti</button>
+                    <button class="filter-btn" onclick="filterMessages('unread')">Non Letti</button>
+                    <button class="filter-btn" onclick="filterMessages('read')">Letti</button>
+                </div>
+                <div>
+                    <button class="btn btn-success" onclick="markAllRead()">
+                        <i class="fas fa-check-double"></i> Segna tutti come letti
+                    </button>
+                    <button class="btn btn-danger" onclick="clearAllMessages()">
+                        <i class="fas fa-trash"></i> Cancella tutti
+                    </button>
+                    <button class="btn btn-primary" onclick="showSubscribers()">
+                        <i class="fas fa-users"></i> Visualizza Iscritti
+                    </button>
+                </div>
+            </div>
+
+            <div id="messages-list">
+                <!-- I messaggi verranno caricati qui -->
+            </div>
+        </div>
+    </div>
+    <!-- Modale Iscritti -->
+    <div id="subscribers-modal"
+        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center;">
+        <div
+            style="background:white; border-radius:12px; max-width:400px; width:90vw; margin:auto; padding:30px; position:relative; box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+            <button onclick="closeSubscribers()"
+                style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:22px; color:#e91e63; cursor:pointer;">&times;</button>
+            <h2 style="margin-bottom:20px; color:#e91e63;"><i class="fas fa-users"></i> Iscritti al negozio</h2>
+            <ul id="subscribers-list" style="list-style:none; padding:0; max-height:300px; overflow-y:auto;"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Rimosso il mockup: non vengono più aggiunti iscritti di esempio
+
+        function showSubscribers() {
+            const modal = document.getElementById('subscribers-modal');
+            const list = document.getElementById('subscribers-list');
+            const subs = JSON.parse(localStorage.getItem('subscribers') || '[]');
+            if (subs.length === 0) {
+                list.innerHTML = '<li>Nessun iscritto trovato.</li>';
+            } else {
+                list.innerHTML = subs.map(s => `<li style="padding:10px 0; border-bottom:1px solid #eee;"><strong>${s.nome}</strong><br><span style="color:#888; font-size:13px;">${s.email}</span></li>`).join('');
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeSubscribers() {
+            document.getElementById('subscribers-modal').style.display = 'none';
+        }
+        let currentFilter = 'all';
+
+
+        // --- INTEGRAZIONE FIREBASE ---
+        // Assumiamo che la configurazione Firebase sia già caricata (come in index.html)
+
+        function loadMessages() {
+            const messagesList = document.getElementById('messages-list');
+
+            // Prova a leggere da Firebase, altrimenti da localStorage
+            if (typeof db !== 'undefined') {
+                db.ref(CHAT_DB_PATH).on('value', snapshot => {
+                    const firebaseMessages = snapshot.val() || {};
+                    // Trasforma oggetti in array e aggiungi id
+                    let messages = Object.entries(firebaseMessages).map(([id, msg]) => ({ ...msg, id }));
+
+                    // Aggiungi anche i messaggi da localStorage
+                    const localMessages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+                    localMessages.forEach(msg => {
+                        if (!messages.find(m => m.timestamp === msg.timestamp)) {
+                            messages.push(msg);
+                        }
+                    });
+
+                    displayMessages(messages);
+                }, (error) => {
+                    console.warn('Firebase non disponibile, uso solo localStorage');
+                    loadFromLocalStorage();
+                });
+            } else {
+                loadFromLocalStorage();
+            }
+        }
+
+        function loadFromLocalStorage() {
+            const messagesList = document.getElementById('messages-list');
+            const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+            console.log('📥 Caricati da localStorage:', messages.length, 'messaggi');
+            displayMessages(messages);
+        }
+
+        function displayMessages(messages) {
+            const messagesList = document.getElementById('messages-list');
+            console.log('📊 Visualizzo:', messages.length, 'messaggi');
+
+            // Aggiorna statistiche
+            document.getElementById('total-messages').textContent = messages.length;
+            document.getElementById('unread-messages').textContent = messages.filter(m => !m.letto && !m.operator).length;
+
+            // Applica filtro sulla lettura solo ai messaggi degli utenti
+            let filteredMessages = messages.slice();
+            if (currentFilter === 'unread') {
+                filteredMessages = filteredMessages.filter(m => !m.letto && !m.operator);
+            } else if (currentFilter === 'read') {
+                filteredMessages = filteredMessages.filter(m => m.letto && !m.operator);
+            }
+
+            // Ordina per più recente
+            filteredMessages.sort((a, b) => b.timestamp - a.timestamp);
+
+            if (filteredMessages.length === 0) {
+                messagesList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>Nessun messaggio</h3>
+                            <p>I messaggi della chat appariranno qui.</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            messagesList.innerHTML = filteredMessages.map(msg => `
+                    <div class="message-card ${msg.operator ? 'operator' : 'client'} ${!msg.letto && !msg.operator ? 'unread' : ''}" data-id="${msg.id}">
+                        <div class="message-header">
+                            <div class="message-date">
+                                <i class="fas fa-clock"></i>
+                                ${msg.data}
+                            </div>
+                            ${!msg.letto && !msg.operator ? '<span class="message-badge">NUOVO</span>' : ''}
+                        </div>
+                        <div class="message-body">
+                            ${msg.message}
+                        </div>
+                        <div class="message-actions">
+                            ${!msg.operator && !msg.letto ? `<button class="btn btn-success" onclick="markAsRead('${msg.id}')">
+                                <i class="fas fa-check"></i> Segna come letto
+                            </button>` : ''}
+                            ${!msg.operator ? `<button class="btn btn-primary" onclick="replyToMessage('${msg.id}', '${msg.message.replace(/'/g, "\\'").replace(/\n/g, ' ')}')">
+                                <i class="fas fa-reply"></i> Rispondi
+                            </button>` : ''}
+                            <button class="btn btn-danger" onclick="deleteMessage('${msg.id}')">
+                                <i class="fas fa-trash"></i> Elimina
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        function filterMessages(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            loadMessages();
+        }
+
+
+        function markAsRead(id) {
+            // Segna come letto su Firebase
+            db.ref(CHAT_DB_PATH + '/' + id).update({ letto: true });
+        }
+
+        function markAllRead() {
+            const messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+            messages.forEach(m => m.letto = true);
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+            loadMessages();
+        }
+
+
+        function deleteMessage(id) {
+            if (confirm('Sei sicuro di voler eliminare questo messaggio?')) {
+                db.ref(CHAT_DB_PATH + '/' + id).remove();
+            }
+        }
+
+
+        function clearAllMessages() {
+            if (confirm('Sei sicuro di voler eliminare TUTTI i messaggi? Questa azione non può essere annullata.')) {
+                db.ref(CHAT_DB_PATH).remove();
+            }
+        }
+
+        // Firebase chat realtime
+        // Assicurati che il codice di configurazione Firebase sia già incluso in index.html
+
+        const CHAT_DB_PATH = 'chat-mickystore';
+
+
+        function sendAdminReply(id, reply) {
+            if (!reply || reply.trim() === '') {
+                alert('Scrivi un messaggio!');
+                return;
+            }
+
+            console.log('📤 Invio risposta...', { id, reply });
+
+            const newAdminMessage = {
+                message: reply,
+                timestamp: Date.now(),
+                data: new Date().toLocaleString('it-IT'),
+                operator: true,
+                replyTo: id
+            };
+
+            // Prova Firebase
+            if (typeof db !== 'undefined') {
+                db.ref(CHAT_DB_PATH).push(newAdminMessage, (error) => {
+                    if (error) {
+                        console.warn('⚠️ Firebase fallito:', error.message);
+                        // Fallback: salva in localStorage
+                        console.log('💾 Salvo su localStorage invece...');
+                        saveAdminReplyToLocalStorage(newAdminMessage);
+                        alert('✅ Risposta salvata (modalità offline). Sarà visibile al cliente.');
+                    } else {
+                        console.log('✅ Risposta inviata su Firebase con successo');
+                        // marca il messaggio originale come letto
+                        db.ref(CHAT_DB_PATH + '/' + id).update({ letto: true }, (err) => {
+                            if (err) console.error('Errore marcatura letto:', err);
+                        });
+                    }
+                    setTimeout(() => loadMessages(), 500);
+                });
+            } else {
+                // Firebase non disponibile, usa localStorage
+                saveAdminReplyToLocalStorage(newAdminMessage);
+                alert('✅ Risposta salvata in localStorage');
+                setTimeout(() => loadMessages(), 500);
+            }
+        }
+
+        function saveAdminReplyToLocalStorage(msgObj) {
+            let messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+            messages.push(msgObj);
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+            console.log('💾 Messaggio admin salvato in localStorage');
+
+            // Notifica istantanea al cliente tramite evento custom
+            const event = new CustomEvent('adminMessageAdded', {
+                detail: {
+                    message: msgObj.message,
+                    timestamp: msgObj.timestamp
+                }
+            });
+            window.dispatchEvent(event);
+            console.log('⚡ Evento adminMessageAdded dispatchato');
+        }
+
+        function replyToMessage(id, message) {
+            const reply = prompt('Scrivi la tua risposta:');
+            if (reply !== null) {
+                sendAdminReply(id, reply);
+            }
+        }
+
+        // Carica messaggi in realtime
+        loadMessages();
+
+        // Auto-refresh ogni 2 secondi per controllare nuovi messaggi
+        setInterval(() => {
+            console.log('🔄 Aggiornamento automatico messaggi...');
+            loadFromLocalStorage();
+        }, 2000);
+    </script>
+</body>
+
+</html>

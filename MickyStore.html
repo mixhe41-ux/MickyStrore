@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prodotti - ᗰIᑕKY ᔕTOᖇE</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script>
+        // Configurazione Firebase reale
+        const firebaseConfig = {
+            apiKey: "AIzaSyBINdSuBqKjP8pW_wx_i6O15PCQSpduubs",
+            authDomain: "my-project-db329.firebaseapp.com",
+            databaseURL: "https://my-project-db329-default-rtdb.firebaseio.com",
+            projectId: "my-project-db329",
+            storageBucket: "my-project-db329.firebasestorage.app",
+            messagingSenderId: "898811994508",
+            appId: "1:898811994508:web:891289864eaf7f0e50b6a9",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        // Autenticazione anonima
+        firebase.auth().signInAnonymously().catch((error) => {
+            console.error('Errore autenticazione Firebase:', error);
+        });
+    </script>
+</head>
+
+<body>
+    <!-- Header e Navigazione -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="1768777026909.jpg" alt="Logo ᗰIᑕKY ᔕTOᖇE" class="logo-img">
+                    <h1 class="store-name">ᗰIᑕKY ᔕTOᖇE</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="prodotti.html" class="active">Prodotti</a></li>
+                    <li><a href="index.html#contatti">Contatti</a></li>
+                </ul>
+                <div class="cart-icon">
+                    <a href="carrello.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </a>
+                    <a href="#" class="wishlist-link" onclick="showWishlistModal()" title="La mia lista desideri">
+                        <i class="fas fa-heart"></i>
+                        <span class="wishlist-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Filtri e Ricerca -->
+    <section class="filters">
+        <div class="container">
+            <div class="filter-bar">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Cerca prodotti...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="category-filter">
+                    <select id="category-filter">
+                        <option value="tutti">Tutte le Categorie</option>
+                        <option value="elettronica">Elettronica</option>
+                        <option value="abbigliamento">Abbigliamento</option>
+                        <option value="casa">Casa</option>
+                        <option value="sport">Sport</option>
+                    </select>
+                </div>
+                <div class="sort-filter">
+                    <select id="sort-filter">
+                        <option value="default">Ordina per</option>
+                        <option value="price-low">Prezzo: Crescente</option>
+                        <option value="price-high">Prezzo: Decrescente</option>
+                        <option value="name">Nome</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalogo Prodotti -->
+    <section class="products-catalog">
+        <div class="container">
+            <h2 class="section-title">I Nostri Prodotti</h2>
+            <div class="products-grid" id="products-container">
+                <!-- I prodotti verranno caricati dinamicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <!-- Footer copyright rimosso su richiesta -->
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

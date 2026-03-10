@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordine Confermato - ᗰIᑕKY ᔕTOᖇE</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #4caf50;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .success-message {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .order-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .order-info h3 {
+            color: #e91e63;
+            margin-bottom: 15px;
+        }
+
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .order-detail:last-child {
+            border-bottom: none;
+        }
+
+        .order-detail label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .order-detail span {
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            color: white;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.3);
+        }
+
+        .btn-products {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-products:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .success-container {
+                margin: 30px 20px;
+                padding: 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header e Navigazione -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="1768777026909.jpg" alt="Logo ᗰIᑕKY ᔕTOᖇE" class="logo-img">
+                    <h1 class="store-name">ᗰIᑕKY ᔕTOᖇE</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="prodotti.html">Prodotti</a></li>
+                    <li><a href="index.html#contatti">Contatti</a></li>
+                </ul>
+                <div class="cart-icon">
+                    <a href="carrello.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Ordine Confermato -->
+    <section class="cart-section">
+        <div class="success-container">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <p class="success-message">Ordine Confermato!</p>
+            <p style="color: #666; margin-bottom: 30px;">Grazie per il tuo acquisto. L'ordine è stato registrato con
+                successo.</p>
+
+            <div class="order-info" id="order-details">
+                <!-- Dettagli ordine verranno caricati qui -->
+            </div>
+
+            <div class="action-buttons">
+                <a href="index.html" class="btn-action btn-home">
+                    <i class="fas fa-home"></i> Torna alla Home
+                </a>
+                <a href="prodotti.html" class="btn-action btn-products">
+                    <i class="fas fa-shopping-bag"></i> Continua gli Acquisti
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <!-- Footer copyright rimosso su richiesta -->
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="chat.js?v=3"></script>
+    <script>
+        function loadOrderDetails() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const lastOrder = orders[orders.length - 1];
+
+            if (!lastOrder) {
+                window.location.href = 'carrello.html';
+                return;
+            }
+
+            let itemsHTML = '';
+            let subtotal = 0;
+            lastOrder.cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                itemsHTML += `
+                    <div class="order-detail">
+                        <label>${item.name} x${item.quantity}</label>
+                        <span>€${itemTotal.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+
+            const total = subtotal + 4.99;
+
+            const detailsHTML = `
+                <h3>Numero Ordine: #${Date.now()}</h3>
+                <div class="order-detail">
+                    <label>Data:</label>
+                    <span>${lastOrder.timestamp}</span>
+                </div>
+                <div class="order-detail">
+                    <label>Nome:</label>
+                    <span>${lastOrder.fullName}</span>
+                </div>
+                <div class="order-detail">
+                    <label>Email:</label>
+                    <span>${lastOrder.email}</span>
+                </div>
+                <div class="order-detail">
+                    <label>Telefono:</label>
+                    <span>${lastOrder.phone}</span>
+                </div>
+                <div class="order-detail">
+                    <label>Indirizzo:</label>
+                    <span>${lastOrder.address}, ${lastOrder.city} ${lastOrder.postalCode}, ${lastOrder.country}</span>
+                </div>
+                <h3 style="margin-top: 20px; margin-bottom: 15px;">Prodotti</h3>
+                ${itemsHTML}
+                <div class="order-detail" style="border-top: 2px solid #ddd; margin-top: 15px; padding-top: 15px; font-weight: bold; font-size: 18px; color: #e91e63;">
+                    <label>Totale:</label>
+                    <span>€${total.toFixed(2)}</span>
+                </div>
+            `;
+
+            document.getElementById('order-details').innerHTML = detailsHTML;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadOrderDetails);
+    </script>
+</body>
+
+</html>

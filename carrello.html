@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrello - ᗰIᑕKY ᔕTOᖇE</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header e Navigazione -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <img src="1768777026909.jpg" alt="Logo ᗰIᑕKY ᔕTOᖇE" class="logo-img">
+                    <h1 class="store-name">ᗰIᑕKY ᔕTOᖇE</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="prodotti.html">Prodotti</a></li>
+                    <li><a href="index.html#contatti">Contatti</a></li>
+                </ul>
+                <div class="cart-icon">
+                    <a href="carrello.html" class="active">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </a>
+                    <a href="#" class="wishlist-link" onclick="showWishlistModal()" title="La mia lista desideri">
+                        <i class="fas fa-heart"></i>
+                        <span class="wishlist-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Carrello -->
+    <section class="cart-section">
+        <div class="container">
+            <h2 class="section-title">Il Tuo Carrello</h2>
+
+            <div class="cart-content">
+                <!-- Carrello Vuoto -->
+                <div id="empty-cart" class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Il tuo carrello è vuoto</h3>
+                    <p>Aggiungi prodotti per iniziare a fare acquisti</p>
+                    <a href="prodotti.html" class="btn btn-primary">Vai ai Prodotti</a>
+                </div>
+
+                <!-- Carrello con Prodotti -->
+                <div id="cart-items" class="cart-items" style="display: none;">
+                    <div class="cart-products">
+                        <!-- I prodotti verranno caricati dinamicamente -->
+                    </div>
+
+                    <div class="cart-summary">
+                        <h3>Riepilogo Ordine</h3>
+                        <div class="summary-row">
+                            <span>Subtotale:</span>
+                            <span id="subtotal">€0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Spedizione:</span>
+                            <span id="shipping">€4.99</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Totale:</span>
+                            <span id="total">€0.00</span>
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="checkout()">
+                            Procedi al Checkout
+                        </button>
+                        <a href="prodotti.html" class="btn btn-secondary btn-block">
+                            Continua gli Acquisti
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <!-- Footer copyright rimosso su richiesta -->
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="chat.js?v=3"></script>
+</body>
+
+</html>
