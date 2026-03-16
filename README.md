@@ -27,27 +27,33 @@ Un sito web completo per vendite online con carrello, catalogo prodotti e sistem
 4. Visualizza e gestisci il tuo carrello
 5. Procedi al checkout
 
-## 🛠️ Personalizzazione
+## � Sistema Chat in Tempo Reale
 
-### Modificare i Prodotti
+Il sito include un sistema di chat integrato per assistenza clienti.
 
-Apri `script.js` e modifica l'array `products`:
+### Funzionamento
 
-```javascript
-const products = [
-    {
-        id: 1,
-        name: "Nome Prodotto",
-        category: "categoria",
-        price: 99.99,
-        image: "url-immagine",
-        description: "Descrizione"
-    },
-    // Aggiungi altri prodotti...
-];
-```
+- **Online (HTTPS)**: Utilizza Firebase Realtime Database per chat istantanea
+- **Locale (HTTP)**: Funziona con localStorage e sincronizzazione tra tab
 
-### Modificare i Colori
+### Pagine Chat
+
+- `chat.js` - Widget chat per clienti
+- `chat.css` - Stili del widget chat
+- `messaggi-admin.html` - Pannello admin per gestire messaggi
+
+### Test Locale
+
+Per testare la chat localmente:
+1. Servi il sito su `http://localhost:8000`
+2. Apri una pagina cliente (es. `prodotti.html`)
+3. Apri `messaggi-admin.html` in un'altra tab
+4. Invia messaggi dalla chat cliente
+5. Rispondi dall'admin (si aggiorna ogni 2 secondi)
+
+### Deploy Online
+
+Quando deployato su HTTPS (es. Netlify), la chat diventa completamente real-time grazie a Firebase.
 
 Apri `styles.css` e modifica le variabili colore nella sezione header:
 

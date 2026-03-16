@@ -53,9 +53,21 @@
                 <input type="text" id="register-username" name="username" required autocomplete="username">
                 <label for="register-email">Email</label>
                 <input type="email" id="register-email" name="email" required autocomplete="email">
+                <label for="register-address">Indirizzo</label>
+                <input type="text" id="register-address" name="address" required autocomplete="street-address"
+                    placeholder="Via, civico">
+                <label for="register-cap">CAP</label>
+                <input type="text" id="register-cap" name="cap" required autocomplete="postal-code" placeholder="CAP">
+                <label for="register-city">Città</label>
+                <input type="text" id="register-city" name="city" required autocomplete="address-level2"
+                    placeholder="Città">
+                <label for="register-country">Paese</label>
+                <input type="text" id="register-country" name="country" required autocomplete="country"
+                    placeholder="Paese">
                 <label for="register-phone">Numero di telefono</label>
                 <div class="phone-row">
-                    <select id="register-prefix" name="prefix" required style="width: 32%; min-width: 80px;">
+                    <select id="register-prefix" name="prefix" required
+                        style="width: 32%; min-width: 80px; font-size: 1.15em;">
                         <option value="+39">🇮🇹 +39</option>
                         <option value="+1">🇺🇸 +1</option>
                         <option value="+44">🇬🇧 +44</option>
@@ -138,6 +150,10 @@
                 </div>
                 <label for="register-password">Password</label>
                 <input type="password" id="register-password" name="password" required autocomplete="new-password">
+                <div class="remember-row" style="margin-bottom: 14px; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="subscribe-newsletter" name="subscribe" value="1">
+                    <label for="subscribe-newsletter" style="font-size: 0.95rem;">Iscrivimi alla newsletter</label>
+                </div>
                 <button type="submit" class="btn btn-primary">Registrati</button>
             </form>
         </div>

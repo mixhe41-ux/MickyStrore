@@ -4,16 +4,22 @@
 // Sostituisci 'chat-mickystore' con un nome univoco per la tua chat
 const CHAT_DB_PATH = 'chat-mickystore';
 
+// Controlla se siamo su HTTPS (Firebase richiede HTTPS)
+const IS_HTTPS = window.location.protocol === 'https:';
+
 class ChatWidget {
     constructor() {
         this.lastOperatorTimestamp = parseInt(localStorage.getItem('lastOperatorTimestamp') || '0', 10);
         this.isOpen = false;
         this.listenersActive = false; // flag per registrare listener UNA SOLA VOLTA
-        if (typeof firebase !== 'undefined' && firebase.auth) {
+        if (IS_HTTPS && typeof firebase !== 'undefined' && firebase.auth) {
             firebase.auth().onAuthStateChanged(() => {
                 this.init();
             });
         } else {
+            if (!IS_HTTPS) {
+                console.warn('⚠️ Chat in tempo reale disabilitata: Firebase richiede HTTPS. Usa solo localStorage per ora.');
+            }
             this.init();
         }
     }
@@ -26,11 +32,11 @@ class ChatWidget {
         // Carica i messaggi salvati localmente
         this.loadMessagesFromLocalStorage();
 
-        // Registra listener Firebase UNA SOLA VOLTA
-        if (!this.listenersActive && typeof db !== 'undefined') {
+        // Registra listener Firebase UNA SOLA VOLTA (solo su HTTPS)
+        if (!this.listenersActive && IS_HTTPS && typeof db !== 'undefined') {
             this.listenersActive = true;
 
-            // listener per sincronizzare con Firebase ogni 2 secondi
+            // listener per sincronizzare con Firebase in tempo reale
             db.ref(CHAT_DB_PATH).on('value', snapshot => {
                 const messages = snapshot.val() || {};
                 const sorted = Object.values(messages).sort((a, b) => a.timestamp - b.timestamp);
@@ -95,6 +101,10 @@ class ChatWidget {
         });
     }
     showFirebaseError(msg) {
+        if (!IS_HTTPS) {
+            console.warn('Firebase non disponibile su HTTP - chat funziona solo con localStorage');
+            return;
+        }
         if (msg && msg.includes('permission_denied')) {
             console.warn('Firebase: accesso limitato, usando localStorage');
             return;
@@ -107,6 +117,11 @@ class ChatWidget {
             document.body.appendChild(errBox);
         }
         errBox.textContent = msg;
+    }
+
+    checkWorkingHours() {
+        // La chat è disponibile 24/7
+        return true;
     }
 
     init() {
@@ -257,6 +272,17 @@ class ChatWidget {
         const chatButton = document.getElementById('chat-button');
         chatWindow.classList.remove('open');
         chatButton.classList.remove('active');
+
+        // Quando l'utente chiude la chat, cancelliamo la cronologia locale
+        // in modo che alla riapertura la conversazione parta pulita.
+        try {
+            localStorage.removeItem('chatMessages');
+            localStorage.removeItem('lastOperatorTimestamp');
+            const chatBody = document.getElementById('chat-body');
+            if (chatBody) chatBody.innerHTML = '';
+        } catch (e) {
+            console.warn('Impossibile cancellare messaggi locali:', e);
+        }
     }
 
     addSystemMessage(message) {

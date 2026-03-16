@@ -1,4 +1,3 @@
-
 // Login Modal logic (corretto)
 window.addEventListener('DOMContentLoaded', function () {
     // Usa event delegation per evitare problemi di duplicazione DOMContentLoaded
@@ -87,32 +86,43 @@ if (registerForm) {
         e.preventDefault();
         const username = document.getElementById('register-username').value.trim();
         const email = document.getElementById('register-email').value.trim();
+        const address = document.getElementById('register-address').value.trim();
+        const cap = document.getElementById('register-cap').value.trim();
+        const city = document.getElementById('register-city').value.trim();
+        const country = document.getElementById('register-country').value.trim();
         const prefix = document.getElementById('register-prefix').value;
         const phone = document.getElementById('register-phone').value.trim();
         const password = document.getElementById('register-password').value;
         const fullPhone = prefix + phone;
-        if (!username || !email || !phone || !password) {
+        if (!username || !email || !phone || !password || !address || !cap || !city || !country) {
             alert('Compila tutti i campi!');
             return;
         }
-        // Recupera clienti esistenti o array vuoto
         let clienti = [];
         try {
             clienti = JSON.parse(localStorage.getItem('clienti')) || [];
         } catch (e) { clienti = []; }
-        // Verifica se email già registrata
         if (clienti.some(c => c.email === email)) {
             alert('Questa email è già registrata!');
             return;
         }
-        // Salva nuovo cliente
-        clienti.push({ username, email, telefono: fullPhone, password });
+        clienti.push({ username, email, telefono: fullPhone, address, cap, city, country, password });
         localStorage.setItem('clienti', JSON.stringify(clienti));
+        const subscribeNewsletter = document.getElementById('subscribe-newsletter');
+        if (subscribeNewsletter && subscribeNewsletter.checked) {
+            try {
+                const subs = JSON.parse(localStorage.getItem('subscribers') || '[]');
+                if (!subs.some(s => s.email === email)) {
+                    subs.push({ username, email, telefono: fullPhone, address, cap, city, country, iscrittoIl: new Date().toLocaleString('it-IT') });
+                    localStorage.setItem('subscribers', JSON.stringify(subs));
+                }
+            } catch (e) {
+                console.warn('Errore salvataggio iscrizione newsletter:', e);
+            }
+        }
         alert('Registrazione completata! Benvenuto/a ' + username);
-        // Chiudi il modal
         const registerModal = document.getElementById('register-modal');
         if (registerModal) registerModal.classList.remove('active');
-        // (Opzionale) Effettua login automatico
         localStorage.setItem('loggedUser', username);
         updateLoginWidget();
     });
@@ -142,15 +152,54 @@ function updateLoginWidget() {
 }
 // Database prodotti
 const products = [
-    // Aggiungi qui i tuoi prodotti seguendo questo formato:
-    // {
-    //     id: 1,
-    //     name: "Nome Prodotto",
-    //     category: "elettronica", // oppure "abbigliamento", "casa", "sport"
-    //     price: 99.99,
-    //     image: "url_immagine.jpg",
-    //     description: "Descrizione del prodotto"
-    // }
+    {
+        id: 1,
+        name: "Crema Idratante Coreana",
+        category: "skincare",
+        price: 25.99,
+        image: "https://www.beautyofjoseon.com/cdn/shop/products/BOJ_Dynasty_Cream_50ml_01_800x.jpg?v=1679038572",
+        description: "Crema idratante ricca, Beauty of Joseon Dynasty Cream. Benefici: idratazione profonda, elasticità, luminosità. Quantità: 50ml. Utilizzo: applicare mattina e sera dopo il tonico. Preoccupazioni: pelle secca, opaca, sensibile. Recensioni: 4.8/5 (oltre 2000 recensioni, molto apprezzata per texture e risultati)."
+    },
+    {
+        id: 2,
+        name: "Siero Vitamina C",
+        category: "skincare",
+        price: 35.50,
+        image: "https://mixsoon.com/cdn/shop/products/mixsoon-bean-essence-50ml-01_800x.jpg?v=1681198572",
+        description: "Mixsoon Bean Essence. Benefici: idratazione, luminosità, miglioramento texture. Quantità: 50ml. Utilizzo: applicare dopo il tonico, prima della crema. Preoccupazioni: pelle spenta, ruvida, disidratata. Recensioni: 4.7/5 (molto apprezzato per effetto glow e assorbimento rapido)."
+    },
+    {
+        id: 3,
+        name: "Maschera Fango Nero",
+        category: "skincare",
+        price: 15.99,
+        image: "https://skin1004.com/cdn/shop/products/skin1004-madagascar-centella-ampoule-100ml-01_800x.jpg?v=1681198572",
+        description: "Skin1004 Madagascar Centella Ampoule. Benefici: purifica, lenisce, riduce rossori. Quantità: 100ml. Utilizzo: applicare su pelle pulita, lasciare agire 10-15 min, risciacquare. Preoccupazioni: pelle irritata, arrossata, sensibile. Recensioni: 4.9/5 (molto apprezzata per effetto calmante e texture leggera)."
+    },
+    {
+        id: 4,
+        name: "Tonico Lenitivo",
+        category: "skincare",
+        price: 20.00,
+        image: "https://www.beautyofjoseon.com/cdn/shop/products/BOJ_Ginseng_Essence_Water_150ml_01_800x.jpg?v=1679038572",
+        description: "Beauty of Joseon Ginseng Essence Water. Benefici: rivitalizza, lenisce, migliora elasticità. Quantità: 150ml. Utilizzo: applicare con le mani o dischetto dopo la detersione. Preoccupazioni: pelle stanca, sensibile, matura. Recensioni: 4.8/5 (molto apprezzato per effetto tonificante e profumo delicato)."
+    },
+    {
+        id: 5,
+        name: "Cleansing Oil",
+        category: "skincare",
+        price: 28.99,
+        image: "https://mixsoon.com/cdn/shop/products/mixsoon-cleansing-oil-01_800x.jpg?v=1681198572",
+        description: "Mixsoon Cleansing Oil. Benefici: rimuove trucco, impurità, idrata. Quantità: 200ml. Utilizzo: massaggiare su pelle asciutta, aggiungere acqua, risciacquare. Preoccupazioni: pelle secca, trucco resistente, impurità. Recensioni: 4.7/5 (molto apprezzato per delicatezza e efficacia)."
+    },
+    {
+        id: 6,
+        name: "Essenza Ialuronica",
+        category: "skincare",
+        price: 40.00,
+        image: "https://skin1004.com/cdn/shop/products/skin1004-hyaluronic-acid-serum-01_800x.jpg?v=1681198572",
+        description: "Skin1004 Hyaluronic Acid Serum. Benefici: idratazione intensa, rimpolpa, migliora elasticità. Quantità: 50ml. Utilizzo: applicare dopo il tonico, prima della crema. Preoccupazioni: pelle disidratata, segni di stanchezza, perdita di tono. Recensioni: 4.9/5 (molto apprezzata per effetto rimpolpante e texture leggera)."
+    }
 ];
 
 // Gestione Carrello
@@ -236,19 +285,18 @@ function createProductCard(product) {
     const heartClass = isInWishlist ? 'fas fa-heart' : 'far fa-heart';
 
     return `
-        <div class="product-card">
+        <div class="product-card" onclick="showProductModal(${product.id})">
             <img src="${product.image}" alt="${product.name}" class="product-image">
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
                 <h3 class="product-name">${product.name}</h3>
-                <p class="product-description">${product.description}</p>
                 <div class="product-footer">
                     <span class="product-price">€${product.price.toFixed(2)}</span>
                     <div class="product-actions">
-                        <button class="btn-add-cart" onclick="addToCart(${product.id})">
+                        <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart(${product.id})">
                             <i class="fas fa-cart-plus"></i> Aggiungi
                         </button>
-                        <button class="btn-wishlist" onclick="toggleWishlist(${product.id})" title="Aggiungi ai preferiti">
+                        <button class="btn-wishlist" onclick="event.stopPropagation(); toggleWishlist(${product.id})" title="Aggiungi ai preferiti">
                             <i class="${heartClass}"></i>
                         </button>
                     </div>
@@ -256,6 +304,100 @@ function createProductCard(product) {
             </div>
         </div>
     `;
+}
+function getConcerns(desc) {
+    const match = desc.match(/Preoccupazioni: ([^\.]+)\./);
+    return match ? match[1] : '';
+}
+function getReviews(desc) {
+    const match = desc.match(/Recensioni: ([^\.]+)$/);
+    return match ? match[1] : '';
+}
+// Modale prodotto dettagliato
+function showProductModal(productId) {
+    const product = products.find(p => p.id === productId);
+    let modal = document.getElementById('product-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'product-modal';
+        modal.className = 'modal';
+        document.body.appendChild(modal);
+    }
+    modal.innerHTML = `
+        <div class="modal-content product-modal-content">
+            <span class="close-modal" onclick="closeProductModal()">&times;</span>
+            <img src="${product.image}" alt="${product.name}" style="width:180px;height:180px;margin-bottom:1rem;border-radius:8px;">
+            <h2>${product.name}</h2>
+            <p><strong>Benefici:</strong> ${getBenefit(product.description)}</p>
+            <p><strong>Quantità:</strong> ${getMl(product.description)}</p>
+            <p><strong>Utilizzo:</strong> ${getUsage(product.description)}</p>
+            <p><strong>Preoccupazioni:</strong> ${getConcerns(product.description)}</p>
+            <p><strong>Recensioni:</strong> ${getReviews(product.description)}</p>
+            <div style="margin: 1rem 0; display: flex; align-items: center; gap: 10px;">
+                <label style="font-weight:500;margin-right:8px;">Quantità:</label>
+                <button type="button" id="qty-minus" style="width:32px;height:32px;font-size:1.3rem;border-radius:6px;border:1px solid #e7b2c7;background:#fff;color:#e1007b;cursor:pointer;">-</button>
+                <span id="modal-quantity" style="min-width:32px;display:inline-block;text-align:center;font-size:1.2rem;font-weight:600;">1</span>
+                <button type="button" id="qty-plus" style="width:32px;height:32px;font-size:1.3rem;border-radius:6px;border:1px solid #e7b2c7;background:#fff;color:#e1007b;cursor:pointer;">+</button>
+            </div>
+            <button class="btn-add-cart" onclick="addToCartWithQuantity(${product.id});closeProductModal();">Aggiungi al carrello</button>
+        </div>
+    `;
+    // Gestione quantità con - e +
+    let qty = 1;
+    const qtySpan = modal.querySelector('#modal-quantity');
+    modal.querySelector('#qty-minus').addEventListener('click', function () {
+        if (qty > 1) qty--;
+        qtySpan.textContent = qty;
+    });
+    modal.querySelector('#qty-plus').addEventListener('click', function () {
+        qty++;
+        qtySpan.textContent = qty;
+    });
+    // ...existing code...
+}
+
+// Aggiungi al carrello con quantità scelta dal modale (globale)
+function addToCartWithQuantity(productId) {
+    const qtySpan = document.getElementById('modal-quantity');
+    let qty = parseInt(qtySpan.textContent);
+    if (isNaN(qty) || qty < 1) qty = 1;
+    const product = products.find(p => p.id === productId);
+    const existingItem = cart.find(item => item.id === productId);
+    if (existingItem) {
+        existingItem.quantity += qty;
+    } else {
+        cart.push({ ...product, quantity: qty });
+    }
+    saveCart();
+    updateCartCount();
+    showNotification('Prodotto aggiunto al carrello!');
+}
+
+function closeProductModal() {
+    const modal = document.getElementById('product-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+// Funzioni di parsing descrizione
+function getBenefit(desc) {
+    const match = desc.match(/Benefici: ([^\.]+)\./);
+    return match ? match[1] : '';
+}
+function getMl(desc) {
+    const match = desc.match(/Quantità: ([^\.]+)\./);
+    return match ? match[1] : '';
+}
+function getUsage(desc) {
+    const match = desc.match(/Utilizzo: ([^\.]+)\./);
+    return match ? match[1] : '';
+}
+function getConcerns(desc) {
+    const match = desc.match(/Preoccupazioni: ([^\.]+)\./);
+    return match ? match[1] : '';
+}
+function getReviews(desc) {
+    const match = desc.match(/Recensioni: ([^\.]+)$/);
+    return match ? match[1] : '';
 }
 
 // Aggiungi al carrello

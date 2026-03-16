@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Messaggi Chat</title>
+    <title>Admin - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -17,7 +17,7 @@
             authDomain: "my-project-db329.firebaseapp.com",
             databaseURL: "https://my-project-db329-default-rtdb.firebaseio.com",
             projectId: "my-project-db329",
-            storageBucket: "my-project-db329.firebasestorage.app",
+            storageBucket: "my-project-db329.appspot.com",
             messagingSenderId: "898811994508",
             appId: "1:898811994508:web:891289864eaf7f0e50b6a9",
             measurementId: "G-3742HRSZ0L"
@@ -279,28 +279,54 @@
             </div>
         </div>
 
-        <div class="messages-container">
-            <div class="actions-bar">
-                <div class="filter-buttons">
-                    <button class="filter-btn active" onclick="filterMessages('all')">Tutti</button>
-                    <button class="filter-btn" onclick="filterMessages('unread')">Non Letti</button>
-                    <button class="filter-btn" onclick="filterMessages('read')">Letti</button>
-                </div>
-                <div>
-                    <button class="btn btn-success" onclick="markAllRead()">
-                        <i class="fas fa-check-double"></i> Segna tutti come letti
-                    </button>
-                    <button class="btn btn-danger" onclick="clearAllMessages()">
-                        <i class="fas fa-trash"></i> Cancella tutti
-                    </button>
-                    <button class="btn btn-primary" onclick="showSubscribers()">
-                        <i class="fas fa-users"></i> Visualizza Iscritti
-                    </button>
+        <div class="admin-sections">
+            <div id="section-messaggi" style="display:block">
+                <!-- Messaggi chat -->
+                <div class="messages-container">
+                    <div class="actions-bar">
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" onclick="filterMessages('all')">Tutti</button>
+                            <button class="filter-btn" onclick="filterMessages('unread')">Non Letti</button>
+                            <button class="filter-btn" onclick="filterMessages('read')">Letti</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-success" onclick="markAllRead()">
+                                <i class="fas fa-check-double"></i> Segna tutti come letti
+                            </button>
+                            <button class="btn btn-danger" onclick="clearAllMessages()">
+                                <i class="fas fa-trash"></i> Cancella tutti
+                            </button>
+                            <button class="btn btn-primary" onclick="showSection('iscritti')">
+                                <i class="fas fa-users"></i> Visualizza Iscritti
+                            </button>
+                            <button class="btn btn-primary" onclick="showSection('ordini')">
+                                <i class="fas fa-box"></i> Visualizza Ordini Ricevuti
+                            </button>
+                        </div>
+                    </div>
+                    <div id="messages-list">
+                        <!-- I messaggi verranno caricati qui -->
+                    </div>
                 </div>
             </div>
-
-            <div id="messages-list">
-                <!-- I messaggi verranno caricati qui -->
+            <div id="section-iscritti" style="display:none">
+                <div class="messages-container">
+                    <button class="btn btn-primary" onclick="showSection('messaggi')"><i class="fas fa-arrow-left"></i>
+                        Torna ai Messaggi</button>
+                    <h2 style="margin:20px 0 10px 0;color:#e91e63"><i class="fas fa-users"></i> Iscritti al negozio</h2>
+                    <button class="btn btn-danger" onclick="deleteAllSubscribersAdmin()" style="margin-bottom:16px"><i
+                            class="fas fa-trash"></i> Cancella tutti gli iscritti</button>
+                    <ul id="subscribers-list" style="list-style:none; padding:0; max-height:300px; overflow-y:auto;">
+                    </ul>
+                </div>
+            </div>
+            <div id="section-ordini" style="display:none">
+                <div class="messages-container">
+                    <button class="btn btn-primary" onclick="showSection('messaggi')"><i class="fas fa-arrow-left"></i>
+                        Torna ai Messaggi</button>
+                    <h2 style="margin:20px 0 10px 0;color:#e91e63"><i class="fas fa-box"></i> Ordini Ricevuti</h2>
+                    <div id="orders-list-admin"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -322,11 +348,94 @@
         function showSubscribers() {
             const modal = document.getElementById('subscribers-modal');
             const list = document.getElementById('subscribers-list');
-            const subs = JSON.parse(localStorage.getItem('subscribers') || '[]');
-            if (subs.length === 0) {
+
+            // Email fittizie da eliminare
+            const fakeEmails = [
+                'mario.rossi@email.com',
+                'luca.bianchi@email.com',
+                'giulia.verdi@email.com'
+            ];
+
+            // Carica gli iscritti alla newsletter (se presente)
+            const storedSubs = JSON.parse(localStorage.getItem('subscribers') || '[]');
+            const filteredSubs = storedSubs.filter(s => !fakeEmails.includes((s.email || '').toLowerCase()));
+
+            // Integra con i clienti registrati (se presenti)
+            const clienti = JSON.parse(localStorage.getItem('clienti') || '[]');
+            const filteredClienti = clienti.filter(c => !fakeEmails.includes((c.email || '').toLowerCase()));
+
+            // Persisti la pulizia (rimuove definitivamente i finti utenti)
+            if (filteredSubs.length !== storedSubs.length) {
+                localStorage.setItem('subscribers', JSON.stringify(filteredSubs));
+            }
+            if (filteredClienti.length !== clienti.length) {
+                localStorage.setItem('clienti', JSON.stringify(filteredClienti));
+            }
+
+            // Data di oggi (formattata) per i record senza data di iscrizione
+            const today = new Date().toLocaleDateString('it-IT');
+
+            // Se manca iscrittoIl, lo impostiamo automaticamente su oggi
+            const subsWithDate = filteredSubs.map(s => ({
+                ...s,
+                iscrittoIl: s.iscrittoIl || s.subscribedOn || today
+            }));
+            const clientiWithDate = filteredClienti.map(c => ({
+                ...c,
+                iscrittoIl: c.iscrittoIl || c.subscribedOn || today
+            }));
+
+            // Salva la data anche in localStorage (tramite update automatico)
+            localStorage.setItem('subscribers', JSON.stringify(subsWithDate));
+            localStorage.setItem('clienti', JSON.stringify(clientiWithDate));
+
+            const clientiSubs = clientiWithDate.map(c => ({
+                username: c.username || c.name || 'Cliente',
+                email: c.email,
+                telefono: c.telefono || c.phone || '',
+                indirizzo: c.address || c.indirizzo || '',
+                cap: c.cap || '',
+                city: c.city || '',
+                country: c.country || '',
+                isCliente: true,
+                iscrittoIl: c.iscrittoIl
+            }));
+
+            // Normalizza e unisci iscritti (evita duplicati per email)
+            const normalize = item => ({
+                username: item.username || item.name || 'Cliente',
+                email: item.email || item.mail || '',
+                telefono: item.telefono || item.phone || '',
+                indirizzo: item.address || item.indirizzo || '',
+                cap: item.cap || '',
+                city: item.city || '',
+                country: item.country || '',
+                isCliente: item.isCliente || false,
+                isSubscriber: item.isSubscriber || false,
+                iscrittoIl: item.iscrittoIl || item.subscribedOn || today
+            });
+
+            const merged = [...filteredSubs.map(normalize), ...clientiSubs.map(normalize)];
+            const uniqueByEmail = Object.values(merged.reduce((acc, item) => {
+                if (!item.email) return acc;
+                if (!acc[item.email]) acc[item.email] = item;
+                return acc;
+            }, {}));
+
+            if (uniqueByEmail.length === 0) {
                 list.innerHTML = '<li>Nessun iscritto trovato.</li>';
             } else {
-                list.innerHTML = subs.map(s => `<li style="padding:10px 0; border-bottom:1px solid #eee;"><strong>${s.nome}</strong><br><span style="color:#888; font-size:13px;">${s.email}</span></li>`).join('');
+                list.innerHTML = `<table style="width:100%;border-collapse:collapse;margin-top:10px"><thead><tr style="background:#f5f5f5"><th style="padding:8px;border:1px solid #eee">Username</th><th style="padding:8px;border:1px solid #eee">Indirizzo</th><th style="padding:8px;border:1px solid #eee">CAP</th><th style="padding:8px;border:1px solid #eee">Città</th><th style="padding:8px;border:1px solid #eee">Paese</th><th style="padding:8px;border:1px solid #eee">Numero</th><th style="padding:8px;border:1px solid #eee">Mail</th><th style="padding:8px;border:1px solid #eee">Data iscrizione</th></tr></thead><tbody>` + uniqueByEmail.map(s => `
+            <tr>
+                <td style="padding:8px;border:1px solid #eee">${s.username || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.indirizzo ? s.indirizzo : ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.cap || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.city || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.country || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.telefono}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.email}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.iscrittoIl}</td>
+            </tr>`).join('') + '</tbody></table>';
             }
             modal.style.display = 'flex';
         }
@@ -334,6 +443,7 @@
         function closeSubscribers() {
             document.getElementById('subscribers-modal').style.display = 'none';
         }
+
         let currentFilter = 'all';
 
 
@@ -342,29 +452,16 @@
 
         function loadMessages() {
             const messagesList = document.getElementById('messages-list');
-
-            // Prova a leggere da Firebase, altrimenti da localStorage
+            // Carica messaggi da Firebase in tempo reale
             if (typeof db !== 'undefined') {
                 db.ref(CHAT_DB_PATH).on('value', snapshot => {
-                    const firebaseMessages = snapshot.val() || {};
-                    // Trasforma oggetti in array e aggiungi id
-                    let messages = Object.entries(firebaseMessages).map(([id, msg]) => ({ ...msg, id }));
-
-                    // Aggiungi anche i messaggi da localStorage
-                    const localMessages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
-                    localMessages.forEach(msg => {
-                        if (!messages.find(m => m.timestamp === msg.timestamp)) {
-                            messages.push(msg);
-                        }
-                    });
-
+                    const messages = Object.values(snapshot.val() || {}).sort((a, b) => b.timestamp - a.timestamp);
                     displayMessages(messages);
-                }, (error) => {
-                    console.warn('Firebase non disponibile, uso solo localStorage');
-                    loadFromLocalStorage();
                 });
             } else {
-                loadFromLocalStorage();
+                // Fallback su localStorage
+                const localMessages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+                displayMessages(localMessages);
             }
         }
 
@@ -406,7 +503,7 @@
             }
 
             messagesList.innerHTML = filteredMessages.map(msg => `
-                    <div class="message-card ${msg.operator ? 'operator' : 'client'} ${!msg.letto && !msg.operator ? 'unread' : ''}" data-id="${msg.id}">
+                    <div class="message-card ${msg.operator ? 'operator' : 'client'} ${!msg.letto && !msg.operator ? 'unread' : ''}" data-id="${msg.id || msg.timestamp}">
                         <div class="message-header">
                             <div class="message-date">
                                 <i class="fas fa-clock"></i>
@@ -418,13 +515,13 @@
                             ${msg.message}
                         </div>
                         <div class="message-actions">
-                            ${!msg.operator && !msg.letto ? `<button class="btn btn-success" onclick="markAsRead('${msg.id}')">
+                            ${!msg.operator && !msg.letto ? `<button class="btn btn-success" onclick="markAsRead(${msg.id || msg.timestamp})">
                                 <i class="fas fa-check"></i> Segna come letto
                             </button>` : ''}
-                            ${!msg.operator ? `<button class="btn btn-primary" onclick="replyToMessage('${msg.id}', '${msg.message.replace(/'/g, "\\'").replace(/\n/g, ' ')}')">
+                            ${!msg.operator ? `<button class="btn btn-primary" onclick="replyToMessage(${msg.id || msg.timestamp})">
                                 <i class="fas fa-reply"></i> Rispondi
                             </button>` : ''}
-                            <button class="btn btn-danger" onclick="deleteMessage('${msg.id}')">
+                            <button class="btn btn-danger" onclick="deleteMessage(${msg.id || msg.timestamp})">
                                 <i class="fas fa-trash"></i> Elimina
                             </button>
                         </div>
@@ -441,8 +538,17 @@
 
 
         function markAsRead(id) {
-            // Segna come letto su Firebase
-            db.ref(CHAT_DB_PATH + '/' + id).update({ letto: true });
+            // Aggiorna localStorage
+            let messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+            messages = messages.map(m => {
+                if (m.id === id || m.timestamp === id) {
+                    m.letto = true;
+                }
+                return m;
+            });
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+            console.log('✅ Messaggio segnato come letto:', id);
+            setTimeout(() => loadMessages(), 300);
         }
 
         function markAllRead() {
@@ -455,7 +561,12 @@
 
         function deleteMessage(id) {
             if (confirm('Sei sicuro di voler eliminare questo messaggio?')) {
-                db.ref(CHAT_DB_PATH + '/' + id).remove();
+                // Rimuovi da localStorage
+                let messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+                messages = messages.filter(m => m.id !== id && m.timestamp !== id);
+                localStorage.setItem('chatMessages', JSON.stringify(messages));
+                console.log('🗑️ Messaggio eliminato:', id);
+                setTimeout(() => loadMessages(), 300);
             }
         }
 
@@ -464,6 +575,13 @@
             if (confirm('Sei sicuro di voler eliminare TUTTI i messaggi? Questa azione non può essere annullata.')) {
                 db.ref(CHAT_DB_PATH).remove();
             }
+        }
+
+        function deleteAllSubscribersAdmin() {
+            localStorage.setItem('subscribers', '[]');
+            localStorage.setItem('clienti', '[]');
+            loadSubscribersAdmin();
+            alert('Tutti gli iscritti sono stati cancellati.');
         }
 
         // Firebase chat realtime
@@ -488,29 +606,36 @@
                 replyTo: id
             };
 
-            // Prova Firebase
+            // Aggiorna localStorage
+            let messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+
+            // Marca il messaggio originale come letto
+            messages = messages.map(m => {
+                if (m.id === id || m.timestamp === id) {
+                    m.letto = true;
+                }
+                return m;
+            });
+
+            // Aggiungi la risposta
+            messages.push(newAdminMessage);
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+            console.log('✅ Risposta salvata in localStorage');
+
+            // Prova a sincronizzare con Firebase
             if (typeof db !== 'undefined') {
                 db.ref(CHAT_DB_PATH).push(newAdminMessage, (error) => {
                     if (error) {
                         console.warn('⚠️ Firebase fallito:', error.message);
-                        // Fallback: salva in localStorage
-                        console.log('💾 Salvo su localStorage invece...');
-                        saveAdminReplyToLocalStorage(newAdminMessage);
-                        alert('✅ Risposta salvata (modalità offline). Sarà visibile al cliente.');
+                        alert('✅ Risposta salvata. Sarà visibile al cliente.');
                     } else {
-                        console.log('✅ Risposta inviata su Firebase con successo');
-                        // marca il messaggio originale come letto
-                        db.ref(CHAT_DB_PATH + '/' + id).update({ letto: true }, (err) => {
-                            if (err) console.error('Errore marcatura letto:', err);
-                        });
+                        console.log('✅ Risposta sincronizzata su Firebase');
                     }
-                    setTimeout(() => loadMessages(), 500);
+                    setTimeout(() => loadMessages(), 300);
                 });
             } else {
-                // Firebase non disponibile, usa localStorage
-                saveAdminReplyToLocalStorage(newAdminMessage);
-                alert('✅ Risposta salvata in localStorage');
-                setTimeout(() => loadMessages(), 500);
+                alert('✅ Risposta salvata');
+                setTimeout(() => loadMessages(), 300);
             }
         }
 
@@ -531,11 +656,103 @@
             console.log('⚡ Evento adminMessageAdded dispatchato');
         }
 
-        function replyToMessage(id, message) {
+        function replyToMessage(id) {
             const reply = prompt('Scrivi la tua risposta:');
-            if (reply !== null) {
+            if (reply !== null && reply.trim() !== '') {
+                console.log('📝 Risposta inviata a:', id);
                 sendAdminReply(id, reply);
             }
+        }
+
+        function showOrdersAdmin() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            if (!orders.length) {
+                alert('Nessun ordine ricevuto.');
+                return;
+            }
+            let html = '';
+            orders.slice().reverse().forEach(order => {
+                html += `<div style="border:1px solid #eee;padding:16px;margin-bottom:16px;border-radius:8px;background:#fafafa">
+            <b>Cliente:</b> ${order.fullName}<br>
+            <b>Email:</b> ${order.email}<br>
+            <b>Telefono:</b> ${order.phone}<br>
+            <b>Indirizzo:</b> ${order.address}, ${order.city} ${order.cap}, ${order.country}
+            <button onclick="navigator.clipboard.writeText('${order.fullName}\n${order.address}\n${order.city} ${order.cap}\n${order.country}');alert('Indirizzo copiato!')" style="margin-left:8px;padding:4px 8px;border-radius:4px;background:#2196f3;color:#fff;border:none;cursor:pointer;font-size:12px"><i class='fas fa-copy'></i> Copia</button><br>
+            <b>Prodotti:</b><ul style="margin:8px 0 0 16px">`;
+                order.cart.forEach(item => {
+                    html += `<li>${item.name} x${item.quantity} (€${(item.price * item.quantity).toFixed(2)})</li>`;
+                });
+                html += `</ul><b>Totale:</b> €${order.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 4.99}<br><b>Data:</b> ${order.timestamp}<br>`;
+                html += '</div>';
+            });
+            html += '</div>';
+            const popup = window.open('', '', 'width=700,height=600');
+            popup.document.write(`<html><head><title>Ordini Ricevuti</title><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'></head><body style='font-family:sans-serif;background:#f5f5f5;padding:24px'>${html}</body></html>`);
+            popup.document.close();
+        }
+
+        function showSection(section) {
+            document.getElementById('section-messaggi').style.display = section === 'messaggi' ? 'block' : 'none';
+            document.getElementById('section-iscritti').style.display = section === 'iscritti' ? 'block' : 'none';
+            document.getElementById('section-ordini').style.display = section === 'ordini' ? 'block' : 'none';
+            if (section === 'iscritti') loadSubscribersAdmin();
+            if (section === 'ordini') loadOrdersAdmin();
+        }
+
+        function loadSubscribersAdmin() {
+            const list = document.getElementById('subscribers-list');
+            const fakeEmails = ['mario.rossi@email.com', 'luca.bianchi@email.com', 'giulia.verdi@email.com'];
+            const storedSubs = JSON.parse(localStorage.getItem('subscribers') || '[]');
+            const filteredSubs = storedSubs.filter(s => !fakeEmails.includes((s.email || '').toLowerCase()));
+            const clienti = JSON.parse(localStorage.getItem('clienti') || '[]');
+            const filteredClienti = clienti.filter(c => !fakeEmails.includes((c.email || '').toLowerCase()));
+            const today = new Date().toLocaleDateString('it-IT');
+            const subsWithDate = filteredSubs.map(s => ({ ...s, iscrittoIl: s.iscrittoIl || s.subscribedOn || today }));
+            const clientiWithDate = filteredClienti.map(c => ({ ...c, iscrittoIl: c.iscrittoIl || c.subscribedOn || today }));
+            localStorage.setItem('subscribers', JSON.stringify(subsWithDate));
+            localStorage.setItem('clienti', JSON.stringify(clientiWithDate));
+            const clientiSubs = clientiWithDate.map(c => ({ username: c.username, email: c.email, telefono: c.telefono || c.phone || '', indirizzo: c.address || c.indirizzo || '', cap: c.cap || '', city: c.city || '', country: c.country || '', isCliente: true, iscrittoIl: c.iscrittoIl }));
+            const normalize = item => ({ username: item.username, email: item.email || item.mail || '', telefono: item.telefono || item.phone || '', indirizzo: item.address || item.indirizzo || '', cap: item.cap || '', city: item.city || '', country: item.country || '', isCliente: item.isCliente || false, isSubscriber: item.isSubscriber || false, iscrittoIl: item.iscrittoIl || item.subscribedOn || today });
+            const merged = [...filteredSubs.map(normalize), ...clientiSubs.map(normalize)];
+            const uniqueByEmail = Object.values(merged.reduce((acc, item) => { if (!item.email) return acc; if (!acc[item.email]) acc[item.email] = item; return acc; }, {}));
+            uniqueByEmail.sort((a, b) => a.username.localeCompare(b.username));
+            if (uniqueByEmail.length === 0) {
+                list.innerHTML = '<li>Nessun iscritto trovato.</li>';
+            } else {
+                list.innerHTML = `<table style="width:100%;border-collapse:collapse;margin-top:10px"><thead><tr style="background:#f5f5f5"><th style="padding:8px;border:1px solid #eee">Username</th><th style="padding:8px;border:1px solid #eee">Indirizzo</th><th style="padding:8px;border:1px solid #eee">CAP</th><th style="padding:8px;border:1px solid #eee">Città</th><th style="padding:8px;border:1px solid #eee">Paese</th><th style="padding:8px;border:1px solid #eee">Numero</th><th style="padding:8px;border:1px solid #eee">Mail</th><th style="padding:8px;border:1px solid #eee">Data iscrizione</th></tr></thead><tbody>` + uniqueByEmail.map(s => `
+            <tr>
+                <td style="padding:8px;border:1px solid #eee">${s.username || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.indirizzo ? s.indirizzo : ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.cap || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.city || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.country || ''}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.telefono}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.email}</td>
+                <td style="padding:8px;border:1px solid #eee">${s.iscrittoIl}</td>
+            </tr>`).join('') + '</tbody></table>';
+            }
+        }
+
+        function loadOrdersAdmin() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const ordersList = document.getElementById('orders-list-admin');
+            if (!orders.length) { ordersList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>Nessun ordine ricevuto</h3><p>Gli ordini dei clienti appariranno qui quando verranno effettuati.</p></div>'; return; }
+            let html = '';
+            orders.slice().reverse().forEach(order => {
+                html += `<div style="border:1px solid #eee;padding:16px;margin-bottom:16px;border-radius:8px;background:#fafafa">
+            <b>Cliente:</b> ${order.fullName}<br>
+            <b>Email:</b> ${order.email}<br>
+            <b>Telefono:</b> ${order.phone}<br>
+            <b>Indirizzo:</b> ${order.address}, ${order.city} ${order.cap}, ${order.country}
+            <button onclick="navigator.clipboard.writeText('${order.fullName}\n${order.address}\n${order.city} ${order.cap}\n${order.country}');alert('Indirizzo copiato!')" style="margin-left:8px;padding:4px 8px;border-radius:4px;background:#2196f3;color:#fff;border:none;cursor:pointer;font-size:12px"><i class='fas fa-copy'></i> Copia</button><br>
+            <b>Prodotti:</b><ul style="margin:8px 0 0 16px">`;
+                order.cart.forEach(item => {
+                    html += `<li>${item.name} x${item.quantity} (€${(item.price * item.quantity).toFixed(2)})</li>`;
+                });
+                html += `</ul><b>Totale:</b> €${order.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 4.99}<br><b>Data:</b> ${order.timestamp}<br>`;
+                html += '</div>';
+            });
+            ordersList.innerHTML = html;
         }
 
         // Carica messaggi in realtime

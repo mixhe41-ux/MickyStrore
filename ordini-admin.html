@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I Miei Ordini - ᗰIᑕKY ᔕTOᖇE</title>
+    <title>Ordini Ricevuti - Admin - ᗰIᑕKY ᔕTOᖇE</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="chat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -240,10 +240,24 @@
             transition: all 0.3s ease;
         }
 
-        .btn-delete:hover {
-            background: #da190b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        .btn-copy {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-copy:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
         }
 
         .payment-badge {
@@ -320,7 +334,7 @@
     <section class="cart-section">
         <div class="orders-container">
             <div class="orders-header">
-                <h2><i class="fas fa-box"></i> I Miei Ordini</h2>
+                <h2><i class="fas fa-box"></i> Ordini Ricevuti - Admin</h2>
                 <div class="orders-stats">
                     <div class="stat-card">
                         <div class="number" id="total-orders">0</div>
@@ -362,11 +376,8 @@
                         <div class="empty-icon">
                             <i class="fas fa-inbox"></i>
                         </div>
-                        <div class="empty-text">Nessun ordine ancora</div>
-                        <div class="empty-subtext">Non hai effettuato nessun acquisto. Inizia a fare shopping!</div>
-                        <a href="prodotti.html" class="btn-shop">
-                            <i class="fas fa-shopping-bag"></i> Vai ai Prodotti
-                        </a>
+                        <div class="empty-text">Nessun ordine ricevuto ancora</div>
+                        <div class="empty-subtext">Gli ordini dei clienti appariranno qui quando verranno effettuati.</div>
                     </div>
                 `;
                 totalSpentEl.textContent = '€0.00';
@@ -428,7 +439,12 @@
 
                         <div class="order-footer">
                             <div class="shipping-address">
-                                <strong><i class="fas fa-map-marker-alt"></i> Indirizzo di Spedizione</strong>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <strong><i class="fas fa-map-marker-alt"></i> Indirizzo di Spedizione</strong>
+                                    <button class="btn-copy" onclick="copyAddress('${order.fullName}', '${order.address}', '${order.city}', '${order.postalCode}', '${order.country}')">
+                                        <i class="fas fa-copy"></i> Copia
+                                    </button>
+                                </div>
                                 ${order.fullName}<br>
                                 ${order.address}<br>
                                 ${order.city} ${order.postalCode}<br>
@@ -462,6 +478,23 @@
                 localStorage.setItem('orders', JSON.stringify(orders));
                 loadOrders();
             }
+        }
+
+        function copyAddress(fullName, address, city, postalCode, country) {
+            const fullAddress = `${fullName}\n${address}\n${city} ${postalCode}\n${country}`;
+            navigator.clipboard.writeText(fullAddress).then(() => {
+                alert('Indirizzo copiato negli appunti!');
+            }).catch(err => {
+                console.error('Errore nel copiare:', err);
+                // Fallback per browser vecchi
+                const textArea = document.createElement('textarea');
+                textArea.value = fullAddress;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Indirizzo copiato negli appunti!');
+            });
         }
 
         // Carica ordini al caricamento della pagina
